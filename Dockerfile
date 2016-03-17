@@ -1,11 +1,17 @@
-FROM daocloud.io/python:2.7
-ADD requirements.txt /tmp/requirements.txt
-RUN pip install -r /tmp/requirements.txt
+FROM debian:latest
+
+MAINTAINER tcztzy@gmail.com
+
+
+RUN apt-get update && apt-get install -y supervisor python-pip
+RUN pip install tornado
+
 RUN mkdir /code
 WORKDIR /code
 COPY . /code
-COPY docker-entrypoint.sh docker-entrypoint.sh
-RUN chmod +x docker-entrypoint.sh
+
 EXPOSE 8000
 
-CMD /code/docker-entrypoint.sh
+COPY supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+CMD /usr/bin/supervisord
